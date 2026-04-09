@@ -11,19 +11,18 @@ export function RGBPicker({
 	const [green, setGreen] = useState<number | string>(255);
 	const [blue, setBlue] = useState<number | string>(255);
 	const [transparency, setTransparency] = useState<number | string>(100);
-    const [TempAlpha, setTempAlpha] = useState<string>('1')
+	const [TempAlpha, setTempAlpha] = useState<string>("1");
 	const color = `rgba(${red}, ${green}, ${blue}, ${Number(transparency) / 100})`;
 
 	useEffect(() => {
-		// eslint-disable-next-line react-hooks/set-state-in-effect
 		setRed(Math.min(Math.ceil(Math.random() * 255), 255));
 		setGreen(Math.min(Math.ceil(Math.random() * 255), 255));
 		setBlue(Math.min(Math.ceil(Math.random() * 255), 255));
 	}, []);
 
-    useEffect(()=>{
-        setTempAlpha(String(Number(transparency) / 100))
-    }, [transparency])
+	useEffect(() => {
+		setTempAlpha(String(Number(transparency) / 100));
+	}, [transparency]);
 
 	useEffect(() => {
 		OnColorChange(color);
@@ -59,6 +58,7 @@ export function RGBPicker({
 							setGreen(Number(val.target.value));
 						}}
 					/>
+                    
 					<input
 						type="range"
 						id=""
@@ -84,7 +84,7 @@ export function RGBPicker({
 					/>
 				</div>
 
-                <div className="flex flex-col gap-10 w-15 ">
+				<div className="flex flex-col gap-10 w-15 ">
 					<input
 						type="text"
 						name="red"
@@ -187,7 +187,6 @@ export function RGBPicker({
 						}}
 					/>
 				</div>
-
 			</div>
 		</div>
 	);

@@ -59,7 +59,7 @@ export const metadata: Metadata = {
 		siteName: "ColorChooser",
 		images: [
 			{
-				url: "/ColorChooserLogo.png",
+				url: "/ColorChooserIcon.ico",
 				alt: "ColorChooser logo",
 			},
 		],
@@ -71,7 +71,7 @@ export const metadata: Metadata = {
 		title: "ColorChooser",
 		description:
 			"ColorChooser is a lightweight web app for generating and copying CSS color strings with live preview.",
-		images: ["/ColorChooserLogo.png"],
+		images: ["/ColorChooserIcon.ico"],
 	},
 	robots: {
 		index: true,
@@ -85,7 +85,16 @@ export const metadata: Metadata = {
 		},
 	},
 	icons: {
-		icon: "/ColorChooserLogo.png",
+		icon: "/ColorChooserIcon.ico",
+		shortcut: "/ColorChooserIcon.ico", // browser shortcut
+		apple: "/ColorChooserIcon.ico", // Apple touch icon
+		other: [
+			{
+				rel: "mask-icon",
+				url: "/ColorChooserIcon.ico",
+				color: "#5bbad5",
+			},
+		],
 	},
 };
 
