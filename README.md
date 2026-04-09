@@ -1,36 +1,100 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ColorChooser — glad you're checking it out
 
-## Getting Started
+Badges (text): Next.js, React, TypeScript, Tailwind CSS, ESLint
 
-First, run the development server:
+## Description
+
+ColorChooser is a small web app for picking colors and copying the resulting CSS color string. It is aimed at developers and designers who need a quick, lightweight way to generate `hsla(...)` or `rgba(...)` values without opening a full design tool.
+
+## Features
+
+- Toggle between Pickers.
+- Slider controls for channels and alpha/transparency
+- Live color preview card
+- One-click copy of the current CSS color string
+- Animated ambient background effects
+
+## Tech Stack
+
+- TypeScript
+- React 19
+- Next.js 16
+- Tailwind CSS v4 (via PostCSS integration)
+- Lucide React (icons)
+- ESLint
+
+## Prerequisites
+
+- Node.js (version not specified in the project)
+- npm (lockfile present)
+- Git (for cloning)
+
+## Installation
+
+1. Clone the repository:
+   ```bash
+   git clone <repo-url>
+   ```
+2. Move into the project directory:
+   ```bash
+   cd <project-directory>
+   ```
+3. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+## Environment Variables
+
+```bash
+# None
+```
+
+## Usage
+
+Development:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Production build:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run build
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Start production server:
 
-## Learn More
+```bash
+npm run start
+```
 
-To learn more about Next.js, take a look at the following resources:
+Lint:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npm run lint
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Deployment
 
-## Deploy on Vercel
+No deployment configuration is included. Use your standard Next.js hosting workflow for your chosen platform.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Known Limitations / Assumptions
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Node.js and npm versions are not pinned in the repository; any compatible versions for the listed dependencies are assumed.
+- No automated tests or CI configuration are present.
+- No live demo or deployment details are provided.
+
+## Contributing
+
+1. Fork the repository.
+2. Create a feature branch.
+3. Make changes and verify locally with `npm run dev` and `npm run lint`.
+4. Open a pull request describing the changes.
+
+## License
+
+MIT License.
+
+** -- RITESH KHARAL -- **

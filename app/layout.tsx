@@ -13,8 +13,80 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-	title: "ColorChooser",
-	description: "A Color choosing website, Free and with not ads.",
+	title: {
+		default: "ColorChooser",
+		template: "%s | RK",
+	},
+	description:
+		"ColorChooser is a lightweight web app for generating and copying CSS color strings with live preview.",
+	keywords: [
+		"RK",
+		"Ritesh Kharal",
+		"ColorChooser",
+		"color picker",
+		"color chooser",
+		"HSL picker",
+		"RGB picker",
+		"hsla",
+		"rgba",
+		"CSS color",
+		"color preview",
+		"copy color string",
+		"developer tool",
+		"designer tool",
+		"Next.js",
+		"Next.js 16",
+		"React",
+		"React 19",
+		"TypeScript",
+		"Tailwind CSS",
+		"PostCSS",
+		"ESLint",
+		"Lucide React",
+	],
+	authors: [{ name: "RK" }],
+	creator: "RK",
+	publisher: "RK",
+	metadataBase: new URL("https://ColorChooser.vercel.app"),
+	alternates: {
+		canonical: "/",
+	},
+	openGraph: {
+		title: "ColorChooser",
+		description:
+			"ColorChooser is a lightweight web app for generating and copying CSS color strings with live preview.",
+		url: "https://ColorChooser.vercel.app",
+		siteName: "ColorChooser",
+		images: [
+			{
+				url: "/ColorChooserLogo.png",
+				alt: "ColorChooser logo",
+			},
+		],
+		locale: "en_US",
+		type: "website",
+	},
+	twitter: {
+		card: "summary_large_image",
+		title: "ColorChooser",
+		description:
+			"ColorChooser is a lightweight web app for generating and copying CSS color strings with live preview.",
+		images: ["/ColorChooserLogo.png"],
+	},
+	robots: {
+		index: true,
+		follow: true,
+		googleBot: {
+			index: true,
+			follow: true,
+			"max-image-preview": "large",
+			"max-snippet": -1,
+			"max-video-preview": -1,
+		},
+	},
+	icons: {
+		icon: "/ColorChooserLogo.png",
+	},
 };
 
 export default function RootLayout({

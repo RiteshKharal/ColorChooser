@@ -58,7 +58,6 @@ export default function Home() {
 						type="radio"
 						name="ColorType"
 						id="HSL"
-						// value={"HSL"}
 						placeholder="HSL"
 						onChange={() => {
 							setPickerType("HSL");
@@ -71,7 +70,6 @@ export default function Home() {
 						type="radio"
 						name="ColorType"
 						id="RGB"
-						// value={"HSL"}
 						onChange={() => {
 							setPickerType("RGB");
 						}}
@@ -81,7 +79,18 @@ export default function Home() {
 			</div>
 
 			<div className="relative z-10 w-full flex flex-col justify-center items-center text-center gap-12">
-				<div className="">{Picker(PickerType)}</div>
+				<div className="flex flex-row gap-20 h-80 items-center">
+					<div
+						className="w-60 h-60 rounded-3xl"
+						style={{
+							backgroundColor: CurrentColor,
+							boxShadow: `0 0 2px ${CurrentColor}`,
+							border: `3px solid hsla(360 100% 99.9% / 0.5)`,
+						}}
+					></div>
+
+					<div>{Picker(PickerType)}</div>
+				</div>
 
 				<div
 					className={`p-3 rounded-2xl flex flex-row gap-5 text-center justify-center w-80 transform transition ${copied ? "text-green-400 [-webkit-text-stroke: 1px black] " : ""} `}
