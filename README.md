@@ -1,10 +1,14 @@
-# ColorChooser — glad you're checking it out
+# ColorChooser
 
 Badges (text): Next.js, React, TypeScript, Tailwind CSS, ESLint
 
+
+
 ## Description
 
-ColorChooser is a small web app for picking colors and copying the resulting CSS color string. It is aimed at developers and designers who need a quick, lightweight way to generate `hsla(...)` or `rgba(...)` values without opening a full design tool.
+ColorChooser is a small web app for picking colors and copying the resulting CSS color string. It is aimed at developers and designers who need a quick, lightweight way to generate color values without opening a full design tool.
+
+
 
 ## Features
 
@@ -13,6 +17,8 @@ ColorChooser is a small web app for picking colors and copying the resulting CSS
 - Live color preview card
 - One-click copy of the current CSS color string
 - Animated ambient background effects
+
+
 
 ## Tech Stack
 
@@ -23,32 +29,32 @@ ColorChooser is a small web app for picking colors and copying the resulting CSS
 - Lucide React (icons)
 - ESLint
 
+
+
 ## Prerequisites
 
-- Node.js (version not specified in the project)
+- Node.js
 - npm (lockfile present)
 - Git (for cloning)
+
+
 
 ## Installation
 
 1. Clone the repository:
    ```bash
-   git clone <repo-url>
+   git clone https://github.com/RiteshKharal/ColorChooser
    ```
 2. Move into the project directory:
    ```bash
-   cd <project-directory>
+   cd ColorChooser
    ```
 3. Install dependencies:
    ```bash
    npm install
    ```
 
-## Environment Variables
 
-```bash
-# None
-```
 
 ## Usage
 
@@ -76,15 +82,6 @@ Lint:
 npm run lint
 ```
 
-## Deployment
-
-No deployment configuration is included. Use your standard Next.js hosting workflow for your chosen platform.
-
-## Known Limitations / Assumptions
-
-- Node.js and npm versions are not pinned in the repository; any compatible versions for the listed dependencies are assumed.
-- No automated tests or CI configuration are present.
-- No live demo or deployment details are provided.
 
 ## Contributing
 
@@ -93,8 +90,8 @@ No deployment configuration is included. Use your standard Next.js hosting workf
 3. Make changes and verify locally with `npm run dev` and `npm run lint`.
 4. Open a pull request describing the changes.
 
-## License
 
-MIT License.
 
-** -- RITESH KHARAL -- **
+<div align='center' style='font-weight:bold; font-size:25px; margin-top:100px; font-family:Arial;'>
+ RITESH KHARAL 
+</div>
