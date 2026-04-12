@@ -1,47 +1,77 @@
 "use client";
-import Image from "next/image";
 import { HSLPicker } from "./components/HSLPicker";
-import { useEffect, useState } from "react";
-import { ClipboardCopy, Check } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { ClipboardCopy, Check, ChevronDown } from "lucide-react";
 import { RGBPicker } from "./components/RGBPicker";
-import { toHex } from "./components/ColorConversions";
+import { toHex, HEXtoRGB, HEXtoHSL } from "./components/ColorConversions";
+import * as font from "@/app/fonts";
 
 export default function Home() {
 	const [CurrentColor, setCurrentColor] = useState<string>(`hsla(0,0%,0%,1)`);
 	const [PickerType, setPickerType] = useState<string>("HSL");
 	const [copied, setCopied] = useState<boolean>(false);
 	const [CurrentColorHex, setCurrentColorHex] = useState<string>("#ffffff");
+	const [ColorType, setColorType] = useState<string>("");
+	const [ConvertedColor, setConvertedColor] = useState<string>(CurrentColor);
+	const [filterOpen, setFilterOpen] = useState<boolean>(false);
+	const containerRef = useRef<HTMLDivElement | null>(null);
+	const handleColorChange = useCallback((color: string) => {
+		setCurrentColor(color);
+	}, []);
 
 	useEffect(() => {
-		// eslint-disable-next-line react-hooks/set-state-in-effect
 		if (PickerType === "RGB") setCurrentColor("rgba(0, 0, 0, 1)");
 		if (PickerType === "HSL") setCurrentColor("hsla(0,0%,0%,1)");
 	}, [PickerType]);
 
 	useEffect(() => {
 		const hex = toHex(CurrentColor);
-		// eslint-disable-next-line react-hooks/set-state-in-effect
 		setCurrentColorHex(hex);
-	}, [CurrentColor]);
+
+		switch (ColorType.toUpperCase()) {
+			case PickerType.toUpperCase():
+				setConvertedColor(CurrentColor);
+				break;
+
+			case "RGB":
+				const rgb = HEXtoRGB(hex);
+				setConvertedColor(rgb);
+				break;
+
+			case "HSL":
+				setConvertedColor(HEXtoHSL(hex));
+				break;
+
+			default:
+				setConvertedColor(CurrentColor);
+				break;
+		}
+	}, [CurrentColor, ColorType, CurrentColorHex, PickerType]);
+
+	useEffect(() => {
+		function handleClickOutside(event: MouseEvent) {
+			if (
+				containerRef.current &&
+				!containerRef.current.contains(event.target as Node)
+			) {
+				setFilterOpen(false);
+			}
+		}
+
+		document.addEventListener("mousedown", handleClickOutside);
+		return () => document.removeEventListener("mousedown", handleClickOutside);
+	}, []);
 
 	const Picker = (val: string) => {
 		switch (val) {
 			case "HSL":
 				return (
-					<HSLPicker
-						OnColorChange={(color) => {
-							setCurrentColor(color);
-						}}
-					/>
+					<HSLPicker OnColorChange={handleColorChange} />
 				);
 
 			case "RGB":
 				return (
-					<RGBPicker
-						OnColorChange={(color) => {
-							setCurrentColor(color);
-						}}
-					/>
+					<RGBPicker OnColorChange={handleColorChange}/>
 				);
 
 			default:
@@ -109,7 +139,7 @@ export default function Home() {
 									height={20}
 									className="cursor-pointer"
 									onClick={(e) => {
-										navigator.clipboard.writeText(CurrentColor);
+										navigator.clipboard.writeText(CurrentColorHex);
 										const icon = e.currentTarget;
 										const check = icon.nextElementSibling as HTMLElement;
 										const wrapper = icon.closest<HTMLElement>(".rounded-2xl")!;
@@ -139,19 +169,73 @@ export default function Home() {
 				</div>
 
 				<div
-					className={`p-3 rounded-2xl flex flex-row gap-5 text-center justify-center w-80 transform transition ${copied ? "text-green-400 [-webkit-text-stroke: 1px black] " : ""} `}
+					className={`p-3 rounded-2xl flex flex-row gap-5 text-center items-center w-100 transform transition ${copied ? "text-green-400 [-webkit-text-stroke: 1px black] " : ""} `}
 					style={{
 						backgroundColor: `hsla(0 0% 0% / 0.3)`,
 					}}
 				>
-					<span className="transition ">{CurrentColor}</span>
-					<span>
+					<div ref={containerRef} className="relative mr-auto">
+						<button
+							onClick={() => setFilterOpen(!filterOpen)}
+							className={`
+							${font.nunito.className}
+							flex items-center gap-2
+							px-4 py-2 rounded-lg
+							bg-[#00000000]/60
+							hover:bg-[#ffffff]/10
+							transition text-sm
+						`}
+						>
+							<span
+								className={
+									filterOpen ? "text-[#ffffff]/80" : "text-[#ffffff]/60"
+								}
+							>
+								{ColorType ? ColorType.toUpperCase() : PickerType.toUpperCase()}
+							</span>
+							<ChevronDown
+								className={`w-4 h-4 transition-transform text-[#ffff] ${filterOpen ? "rotate-180" : ""}`}
+							/>
+						</button>
+
+						{filterOpen && (
+							<div className="absolute top-full left-0 mt-2 w-44 bg-[#000000]/90 rounded-xl shadow-md  z-99">
+								<ul className="py-1 text-sm text-[#ffff] text-center p-1">
+									<li
+										className="px-4 py-2 hover:bg-[#ffff]/10 cursor-pointer transition"
+										onClick={() => {
+											setColorType("HSL");
+											setFilterOpen(false);
+										}}
+									>
+										HSL
+									</li>
+
+									<li
+										className="px-4 py-2 hover:bg-[#ffff]/10 cursor-pointer transition"
+										onClick={() => {
+											setColorType("RGB");
+											setFilterOpen(false);
+										}}
+									>
+										RGB
+									</li>
+								</ul>
+							</div>
+						)}
+					</div>
+
+					<div className={`transition h-full text-center justify-center flex tracking-wider ${font.comfortaa.className}`}>
+						{ConvertedColor}
+					</div>
+
+					<div className="ml-auto">
 						{copied ? (
 							<Check
 								size={20}
 								height={20}
 								onClick={() => {
-									navigator.clipboard.writeText(CurrentColor);
+									navigator.clipboard.writeText(ConvertedColor);
 								}}
 								className="text-center justify-center flex cursor-pointer animate-[ScaleUp_0.1s_ease-in-out] "
 							/>
@@ -160,7 +244,7 @@ export default function Home() {
 								size={20}
 								height={20}
 								onClick={() => {
-									navigator.clipboard.writeText(CurrentColor);
+									navigator.clipboard.writeText(ConvertedColor);
 									setCopied(true);
 
 									setTimeout(() => {
@@ -170,7 +254,7 @@ export default function Home() {
 								className="text-center justify-center flex cursor-pointer animate-[ScaleUp_0.1s_ease-in-out]"
 							/>
 						)}
-					</span>
+					</div>
 				</div>
 			</div>
 		</div>

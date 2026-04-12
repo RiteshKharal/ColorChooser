@@ -12,13 +12,21 @@ export function HSLPicker({
 	const [lightness, setLightness] = useState<number | string>(100);
 	const [transparency, setTransparency] = useState<number | string>(100);
 	const [TempAlpha, setTempAlpha] = useState<string>("1");
-	const color = `hsla(${Number(hue)}, ${Number(saturation)}%, ${Number(lightness)}%, ${Number(transparency) / 100})`;
+	const color =
+		Number(transparency) / 100 === 1
+			? `hsl(${Number(hue)}, ${Number(saturation)}%, ${Number(lightness)}%)`
+			: `hsla(${Number(hue)}, ${Number(saturation)}%, ${Number(lightness)}%, ${Number(transparency) / 100})`;
+
+	const [mounted, setMounted] = useState<boolean>(false);
 
 	useEffect(() => {
+		if (mounted) return;
 		setHue(Math.min(Math.ceil(Math.random() * 360), 360));
 		setSaturation(Math.min(Math.ceil(Math.random() * 100), 100));
 		setLightness(Math.min(Math.ceil(Math.random() * 100), 100));
-	}, []);
+
+		setMounted(true);
+	}, [mounted]);
 
 	useEffect(() => {
 		setTempAlpha(String(Number(transparency) / 100));
@@ -38,7 +46,6 @@ export function HSLPicker({
 					<input
 						type="range"
 						name="hue"
-						id=""
 						className=""
 						min={0}
 						max={3600}
@@ -50,7 +57,6 @@ export function HSLPicker({
 
 					<input
 						type="range"
-						id=""
 						className=""
 						min={0}
 						max={1000}
@@ -61,7 +67,6 @@ export function HSLPicker({
 					/>
 					<input
 						type="range"
-						id=""
 						className=""
 						min={0}
 						max={1000}

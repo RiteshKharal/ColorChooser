@@ -4,15 +4,17 @@ import * as font from "@/app/fonts";
 
 export function RGBPicker({
 	OnColorChange,
+	// CurrentColor
 }: {
-	OnColorChange: (CurrentColor: string) => void;
+	OnColorChange: (CurrentColor: string) => void,
+	// CurrentColor: string
 }) {
 	const [red, setRed] = useState<number | string>(255);
 	const [green, setGreen] = useState<number | string>(255);
 	const [blue, setBlue] = useState<number | string>(255);
 	const [transparency, setTransparency] = useState<number | string>(100);
 	const [TempAlpha, setTempAlpha] = useState<string>("1");
-	const color = `rgba(${red}, ${green}, ${blue}, ${Number(transparency) / 100})`;
+	const color = Number(transparency) / 100 === 1 ? `rgb(${red}, ${green}, ${blue})` : `rgba(${red}, ${green}, ${blue}, ${Number(transparency) / 100})`;
 
 	useEffect(() => {
 		setRed(Math.min(Math.ceil(Math.random() * 255), 255));
@@ -26,7 +28,7 @@ export function RGBPicker({
 
 	useEffect(() => {
 		OnColorChange(color);
-	}, [OnColorChange, color, red, blue, green, transparency]);
+	}, [OnColorChange, color]);
 
 	return (
 		<div
