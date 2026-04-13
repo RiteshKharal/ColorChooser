@@ -6,11 +6,10 @@ export function toHex(color: string): string {
 
 	const ctx = canvas.getContext("2d")!;
 	ctx.fillStyle = color;
-  
+
 	ctx.fillRect(0, 0, 1, 1);
 	const [r, g, b, a] = ctx.getImageData(0, 0, 1, 1).data;
 
-  
 	const hex = [r, g, b].map((v) => v.toString(16).padStart(2, "0")).join("");
 	return `#${hex}${a === 255 ? "" : a.toString(16).padStart(2, "0")}`;
 }
