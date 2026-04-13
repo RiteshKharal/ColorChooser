@@ -4,26 +4,40 @@ import * as font from "@/app/fonts";
 
 export function RGBPicker({
 	OnColorChange,
-	// CurrentColor
+	CurrentColor,
 }: {
-	OnColorChange: (CurrentColor: string) => void,
-	// CurrentColor: string
+	OnColorChange: (CurrentColor: string) => void;
+	CurrentColor: string;
 }) {
 	const [red, setRed] = useState<number | string>(255);
 	const [green, setGreen] = useState<number | string>(255);
 	const [blue, setBlue] = useState<number | string>(255);
 	const [transparency, setTransparency] = useState<number | string>(100);
 	const [TempAlpha, setTempAlpha] = useState<string>("1");
-	const color = Number(transparency) / 100 === 1 ? `rgb(${red}, ${green}, ${blue})` : `rgba(${red}, ${green}, ${blue}, ${Number(transparency) / 100})`;
+	const color =
+		Number(transparency) / 100 === 1
+			? `rgb(${red}, ${green}, ${blue})`
+			: `rgba(${red}, ${green}, ${blue}, ${Number(transparency) / 100})`;
 
 	useEffect(() => {
-		setRed(Math.min(Math.ceil(Math.random() * 255), 255));
-		setGreen(Math.min(Math.ceil(Math.random() * 255), 255));
-		setBlue(Math.min(Math.ceil(Math.random() * 255), 255));
+		const ColorValues = CurrentColor.match(/[\d.]+/g)?.map(Number);
+		if (!ColorValues) return;
+
+		setRed(ColorValues[0] ?? Math.min(Math.ceil(Math.random() * 255), 255));
+
+		setGreen(ColorValues[1] ?? Math.min(Math.ceil(Math.random() * 255), 255));
+
+		setBlue(ColorValues[2] ?? Math.min(Math.ceil(Math.random() * 255), 255));
+
+		setTransparency(ColorValues[3] !== undefined ? ColorValues[3] * 100 : 100);
+
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	useEffect(() => {
-		setTempAlpha(String(Number(transparency) / 100));
+		const val = String(Number(transparency) / 100);
+		if (val !== TempAlpha) setTempAlpha(val);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [transparency]);
 
 	useEffect(() => {
@@ -60,7 +74,7 @@ export function RGBPicker({
 							setGreen(Number(val.target.value));
 						}}
 					/>
-                    
+
 					<input
 						type="range"
 						id=""

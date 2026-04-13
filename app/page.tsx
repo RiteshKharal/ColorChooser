@@ -46,7 +46,7 @@ export default function Home() {
 				setConvertedColor(CurrentColor);
 				break;
 		}
-	}, [CurrentColor, ColorType, CurrentColorHex, PickerType]);
+	}, [CurrentColor, ColorType, PickerType]);
 
 	useEffect(() => {
 		function handleClickOutside(event: MouseEvent) {
@@ -66,12 +66,20 @@ export default function Home() {
 		switch (val) {
 			case "HSL":
 				return (
-					<HSLPicker OnColorChange={handleColorChange} />
+					<HSLPicker
+						OnColorChange={handleColorChange}
+						CurrentColor={HEXtoHSL(CurrentColorHex)}
+						key={"hsl"}
+					/>
 				);
 
 			case "RGB":
 				return (
-					<RGBPicker OnColorChange={handleColorChange}/>
+					<RGBPicker
+						OnColorChange={handleColorChange}
+						CurrentColor={HEXtoRGB(CurrentColorHex)}
+						key={"rgb"}
+					/>
 				);
 
 			default:
@@ -225,7 +233,9 @@ export default function Home() {
 						)}
 					</div>
 
-					<div className={`transition h-full text-center justify-center flex tracking-wider ${font.comfortaa.className}`}>
+					<div
+						className={`transition h-full text-center justify-center flex tracking-wider ${font.comfortaa.className}`}
+					>
 						{ConvertedColor}
 					</div>
 
