@@ -31,7 +31,7 @@ export function RGBPicker({
 
 		setTransparency(ColorValues[3] !== undefined ? ColorValues[3] * 100 : 100);
 
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	useEffect(() => {

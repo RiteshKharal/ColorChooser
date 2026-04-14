@@ -7,10 +7,10 @@ import { toHex, HEXtoRGB, HEXtoHSL } from "./components/ColorConversions";
 import * as font from "@/app/fonts";
 
 export default function Home() {
-	const [CurrentColor, setCurrentColor] = useState<string>(`hsla(0,0%,0%,1)`);
+	const [CurrentColor, setCurrentColor] = useState<string>(``);
 	const [PickerType, setPickerType] = useState<string>("HSL");
 	const [copied, setCopied] = useState<boolean>(false);
-	const [CurrentColorHex, setCurrentColorHex] = useState<string>("#ffffff");
+	const [CurrentColorHex, setCurrentColorHex] = useState<string>("");
 	const [ColorType, setColorType] = useState<string>("");
 	const [ConvertedColor, setConvertedColor] = useState<string>(CurrentColor);
 	const [filterOpen, setFilterOpen] = useState<boolean>(false);
@@ -20,8 +20,14 @@ export default function Home() {
 	}, []);
 
 	useEffect(() => {
-		if (PickerType === "RGB") setCurrentColor("rgba(0, 0, 0, 1)");
-		if (PickerType === "HSL") setCurrentColor("hsla(0,0%,0%,1)");
+		setCurrentColor(
+			`hsl(${Math.floor(Math.random() * 360)}, ${Math.floor(Math.random() * 100)}%, ${Math.floor(Math.random() * 100)}%)`,
+		);
+	}, []);
+
+	useEffect(() => {
+		if (PickerType === "RGB") setCurrentColor(HEXtoRGB(CurrentColorHex));
+		if (PickerType === "HSL") setCurrentColor(HEXtoHSL(CurrentColorHex));
 	}, [PickerType]);
 
 	useEffect(() => {
@@ -177,7 +183,7 @@ export default function Home() {
 				</div>
 
 				<div
-					className={`p-3 rounded-2xl flex flex-row gap-5 text-center items-center w-100 transform transition ${copied ? "text-green-400 [-webkit-text-stroke: 1px black] " : ""} `}
+					className={`p-3 rounded-2xl flex flex-row gap-5 text-center items-center w-110 transform transition ${copied ? "text-green-400 [-webkit-text-stroke: 1px black] " : ""} `}
 					style={{
 						backgroundColor: `hsla(0 0% 0% / 0.3)`,
 					}}
@@ -234,7 +240,7 @@ export default function Home() {
 					</div>
 
 					<div
-						className={`transition h-full text-center justify-center flex tracking-wider ${font.comfortaa.className}`}
+						className={`transition h-full tracking-wider ${font.comfortaa.className}`}
 					>
 						{ConvertedColor}
 					</div>

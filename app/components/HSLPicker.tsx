@@ -9,18 +9,13 @@ export function HSLPicker({
 	OnColorChange: (color: string) => void;
 	CurrentColor: string;
 }) {
-	const [hue, setHue] = useState<number | string>(
-		Math.min(Math.ceil(Math.random() * 360), 360),
-	);
-	const [saturation, setSaturation] = useState<number | string>(
-		Math.min(Math.ceil(Math.random() * 100), 100),
-	);
-	const [lightness, setLightness] = useState<number | string>(
-		Math.min(Math.ceil(Math.random() * 100), 100),
-	);
+	const [hue, setHue] = useState<number | string>(1);
+	const [saturation, setSaturation] = useState<number | string>(50);
+	const [lightness, setLightness] = useState<number | string>(75);
 	const [transparency, setTransparency] = useState<number | string>(100);
 
 	const [TempAlpha, setTempAlpha] = useState<string>("1");
+
 	const color =
 		Number(transparency) / 100 === 1
 			? `hsl(${Number(hue)}, ${Number(saturation)}%, ${Number(lightness)}%)`
@@ -29,17 +24,16 @@ export function HSLPicker({
 	useEffect(() => {
 		const ColorValues = CurrentColor.match(/[\d.]+/g)?.map(Number);
 
-		if (!ColorValues) return;
-
-		if(typeof ColorValues[0] !== "undefined") setHue(ColorValues[0]);
-
-		if(typeof ColorValues[1] !== "undefined") setSaturation(ColorValues[1]);
-
-		if(typeof ColorValues[2] !== "undefined") setLightness(ColorValues[2]);
-
-		if(typeof ColorValues[3] !== "undefined") setTransparency(ColorValues[3] * 100);
-
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+		if (ColorValues && ColorValues.length >= 3) {
+			if (ColorValues[0] !== undefined) setHue(ColorValues[0]);
+			if (ColorValues[1] !== undefined) setSaturation(ColorValues[1]);
+			if (ColorValues[2] !== undefined) setLightness(ColorValues[2]);
+			if (ColorValues[3] !== undefined) setTransparency(ColorValues[3] * 100);
+		} else {
+			setHue(Math.min(Math.ceil(Math.random() * 360), 360));
+			setSaturation(Math.min(Math.ceil(Math.random() * 100), 100));
+			setLightness(Math.min(Math.ceil(Math.random() * 100), 100));
+		}
 	}, []);
 
 	useEffect(() => {
