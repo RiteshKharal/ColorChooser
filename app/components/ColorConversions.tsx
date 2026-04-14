@@ -58,3 +58,32 @@ export function HEXtoHSL(hex: string): string {
 		? `hsl(${Math.round(h * 360)}, ${Math.round(s * 100)}%, ${Math.round(l * 100)}%)`
 		: `hsla(${Math.round(h * 360)}, ${Math.round(s * 100)}%, ${Math.round(l * 100)}%, ${parseFloat(a.toFixed(2))})`;
 }
+
+export function HEXtoHWB(hex: string): string {
+	const hasAlpha = hex.length === 9; // #rrggbbaa
+	const r = parseInt(hex.slice(1, 3), 16) / 255;
+	const g = parseInt(hex.slice(3, 5), 16) / 255;
+	const b = parseInt(hex.slice(5, 7), 16) / 255;
+	const a = hasAlpha ? parseInt(hex.slice(7, 9), 16) / 255 : 1;
+
+	const white = Math.min(r, g, b);
+	const black = 1 - Math.max(r, g, b);
+	const chroma = 1 - white - black;
+
+	let hue = 0;
+	if (chroma !== 0) {
+		const max = Math.max(r, g, b);
+		if (max === r) hue = ((g - b) / chroma) % 6;
+		else if (max === g) hue = (b - r) / chroma + 2;
+		else hue = (r - g) / chroma + 4;
+		hue = Math.round(hue * 60);
+		if (hue < 0) hue += 360;
+	}
+
+	const W = Math.round(white * 100);
+	const B = Math.round(black * 100);
+
+	return a === 1
+		? `hwb(${hue} ${W}% ${B}%)`
+		: `hwb(${hue} ${W}% ${B}% / ${+a.toFixed(2)})`;
+}

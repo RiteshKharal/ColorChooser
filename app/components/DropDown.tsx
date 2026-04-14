@@ -1,135 +1,97 @@
-// "use client";
+"use client";
+import React from "react";
+import { useState, useRef, useEffect } from "react";
+import * as font from "@/app/fonts";
+import { ChevronDown } from "lucide-react";
 
-// import { ChevronDown } from "lucide-react";
-// import React, { useState, useEffect, useRef } from "react";
-// import { Ubuntu, Nunito } from "next/font/google";
+export function DropDown({
+	PickerType,
+	OnChange,
+	...props
+}: React.ComponentProps<"div"> & {
+	OnChange: (ColorType: string) => void;
+	PickerType: string;
+}) {
+	const [filterOpen, setFilterOpen] = useState<boolean>(false);
+	const containerRef = useRef<HTMLDivElement | null>(null);
+	const [ColorType, setColorType] = useState<string>("");
 
-// const ubuntu = Ubuntu({
-// 	subsets: ["latin"],
-// 	weight: ["300", "400", "500", "700"],
-// 	variable: "--font-ubuntu",
-// });
+	useEffect(() => {
+		OnChange(ColorType);
+	}, [ColorType, OnChange]);
 
-// const nunito = Nunito({
-// 	subsets: ["latin"],
-// 	weight: ["200", "400", "600", "700", "900"],
-// 	variable: "--font-nunito",
-// });
+	useEffect(() => {
+		function handleClickOutside(event: MouseEvent) {
+			if (
+				containerRef.current &&
+				!containerRef.current.contains(event.target as Node)
+			) {
+				setFilterOpen(false);
+			}
+		}
 
-// type ComponentTypes = {
-// 	title: string | React.ReactNode;
-// 	options: {
-// 		OptionName: string;
-// 		OptionCallBack: () => void;
-// 	}[];
-// };
+		document.addEventListener("mousedown", handleClickOutside);
+		return () => document.removeEventListener("mousedown", handleClickOutside);
+	}, []);
 
-// function Component({ title, options }: ComponentTypes) {
-// 	const [filterOpen, setFilterOpen] = useState<boolean>(false);
-// 	const containerRef = useRef<HTMLDivElement | null>(null);
+	return (
+		<div ref={containerRef} className="relative mr-auto" {...props}>
+			<button
+				onClick={() => setFilterOpen(!filterOpen)}
+				className={`
+							${font.nunito.className}
+							flex items-center gap-2
+							px-4 py-2 rounded-lg
+							bg-[#00000000]/60
+							hover:bg-[#ffffff]/10
+							transition text-sm
+						`}
+			>
+				<span
+					className={filterOpen ? "text-[#ffffff]/80" : "text-[#ffffff]/60"}
+				>
+					{ColorType ? ColorType.toUpperCase() : PickerType.toUpperCase()}
+				</span>
+				<ChevronDown
+					className={`w-4 h-4 transition-transform text-[#ffff] ${filterOpen ? "rotate-180" : ""}`}
+				/>
+			</button>
 
-// 	useEffect(() => {
-// 		function handleClickOutside(event: MouseEvent) {
-// 			if (
-// 				containerRef.current &&
-// 				!containerRef.current.contains(event.target as Node)
-// 			) {
-// 				setFilterOpen(false);
-// 			}
-// 		}
+			{filterOpen && (
+				<div className="absolute top-full left-0 mt-2 w-44 bg-[#000000]/90 rounded-xl shadow-md  z-99">
+					<ul className="py-1 text-sm text-[#ffff] text-center p-1">
+						<li
+							className="px-4 py-2 hover:bg-[#ffff]/10 cursor-pointer transition"
+							onClick={() => {
+								setColorType("HSL");
+								setFilterOpen(false);
+							}}
+						>
+							HSL
+						</li>
 
-// 		document.addEventListener("mousedown", handleClickOutside);
-// 		return () => document.removeEventListener("mousedown", handleClickOutside);
-// 	}, []);
+						<li
+							className="px-4 py-2 hover:bg-[#ffff]/10 cursor-pointer transition"
+							onClick={() => {
+								setColorType("RGB");
+								setFilterOpen(false);
+							}}
+						>
+							RGB
+						</li>
 
-// 	return (
-// 		<div className="w-fit h-fit text-center content-center">
-// 			<div
-// 				className={`
-//         ${ubuntu.className} flex flex-row text-center gap-4 rounded-2xl 
-//         overflow-visible z-10
-//       `}
-// 			>
-// 				<div ref={containerRef} className="relative ">
-// 					<button
-// 						onClick={() => setFilterOpen(!filterOpen)}
-// 						className={`
-// 							${nunito.className}
-// 							flex items-center gap-2
-// 							px-4 py-2 rounded-lg text-center content-center place-content-center
-// 							border border-[hsla(240_5.9%_47%/0.4)] dark:border-[hsla(240_3.7%_20.9%/0.4)]
-// 							bg-[hsla(0_0%_100%/0.6)] dark:bg-[hsla(240_10%_3%/0.6)]
-// 							hover:bg-[hsla(240_10%_3.9%/0.1)] dark:hover:bg-[hsla(0_0%_98%/0.1)]
-// 							transition text-sm
-// 						`}
-// 					>
-// 						<span
-// 							className={
-// 								`text-center` + filterOpen
-// 									? "text-[hsla(240_10%_3.9%/0.8)] dark:text-[hsla(0_0%_98%/0.8)]"
-// 									: "text-[hsla(240_10%_3.9%/0.6)] dark:text-[hsla(0_0%_98%/0.6)]"
-// 							}
-// 						>
-// 							<span className="text-[hsla(240_10%_3.9%/0.9)] dark:text-[hsla(0_0%_98%/0.9)] font-bold mr-3 text-center">
-// 								{title}
-// 							</span>
-// 						</span>
-// 						<ChevronDown
-// 							className={`w-4 h-4 transition-transform ${filterOpen ? "rotate-180" : ""} text-[hsla(240_10%_3.9%/0.8)] dark:text-[hsla(0_0%_98%/0.8)]`}
-// 						/>
-// 					</button>
-
-// 					{filterOpen && (
-// 						<div className="absolute top-full left-0 mt-2 w-44 bg-[hsla(0_0%_100%/0.9)] dark:bg-[hsla(240_10%_3%/0.9)] rounded-xl shadow-md z-99">
-// 							<ul className="py-1 text-sm text-[hsla(240_10%_3.9%/1)] dark:text-[hsla(0_0%_98%/1)] text-center p-1">
-// 								{options.map((opt, i) => {
-// 									return (
-// 										<li
-// 											className="px-4 py-2 hover:bg-[hsla(240_10%_3.9%/0.1)] dark:hover:bg-[hsla(0_0%_98%/0.1)] cursor-pointer transition"
-// 											onClick={() => {
-// 												opt.OptionCallBack();
-// 												setFilterOpen(false);
-// 											}}
-// 											key={i}
-// 										>
-// 											{opt.OptionName}
-// 										</li>
-// 									);
-// 								})}
-// 							</ul>
-// 						</div>
-// 					)}
-// 				</div>
-// 			</div>
-// 		</div>
-// 	);
-// }
-
-// export function DropDown() {
-
-//   return (
-//     <div className=" invisible md:visible ">
-//       <Component
-//       title={
-//         <span className="flex flex-row gap-3 h-0 text-center place-items-center-safe justify-center self-center p-0">
-//           <FaStar /> Modes
-//         </span>
-//       }
-//       options={[
-//         {
-//           OptionName: "🏠 Minimal mode",
-//           OptionCallBack: () => {
-//             window.location.href = "/";
-//           },
-//         },
-//         {
-//           OptionName: "🎮 Game mode",
-//           OptionCallBack: () => {
-//             window.location.href = "/Game";
-//           },
-//         },
-//       ]}
-//     />
-//     </div>
-//   );
-// }
+                            <li
+                                className="px-4 py-2 hover:bg-[#ffff]/10 cursor-pointer transition"
+                                onClick={() => {
+                                    setColorType("HWB");
+                                    setFilterOpen(false);
+                                }}
+                            >
+                                HWB
+                            </li>
+					</ul>
+				</div>
+			)}
+		</div>
+	);
+}

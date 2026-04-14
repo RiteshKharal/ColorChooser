@@ -34,8 +34,10 @@ export function HSLPicker({
 			setSaturation(Math.min(Math.ceil(Math.random() * 100), 100));
 			setLightness(Math.min(Math.ceil(Math.random() * 100), 100));
 		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
+	
 	useEffect(() => {
 		const val = String(Number(transparency) / 100);
 		if (val !== TempAlpha) setTempAlpha(val);
@@ -44,8 +46,7 @@ export function HSLPicker({
 
 	useEffect(() => {
 		OnColorChange(color);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [color, hue, lightness, saturation, transparency]);
+	}, [OnColorChange, color]);
 
 	return (
 		<div

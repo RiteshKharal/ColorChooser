@@ -1,22 +1,24 @@
 "use client";
-import { HSLPicker } from "./components/HSLPicker";
+import { HSLPicker } from "./pickers/HSLPicker";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ClipboardCopy, Check, ChevronDown } from "lucide-react";
-import { RGBPicker } from "./components/RGBPicker";
+import { ClipboardCopy, Check } from "lucide-react";
+import { RGBPicker } from "./pickers/RGBPicker";
 import { toHex, HEXtoRGB, HEXtoHSL } from "./components/ColorConversions";
 import * as font from "@/app/fonts";
+import { DropDown } from "./components/DropDown";
+import { HEXtoHWB } from "./components/ColorConversions";
+import { HWBPicker } from "./pickers/HWBPicker";
 
 export default function Home() {
 	const [CurrentColor, setCurrentColor] = useState<string>(``);
-	const [PickerType, setPickerType] = useState<string>("HSL");
-	const [copied, setCopied] = useState<boolean>(false);
-	const [CurrentColorHex, setCurrentColorHex] = useState<string>("");
-	const [ColorType, setColorType] = useState<string>("");
 	const [ConvertedColor, setConvertedColor] = useState<string>(CurrentColor);
-	const [filterOpen, setFilterOpen] = useState<boolean>(false);
-	const containerRef = useRef<HTMLDivElement | null>(null);
+	const [CurrentColorHex, setCurrentColorHex] = useState<string>("");
+
+	const [PickerType, setPickerType] = useState<string>("HSL");
+	const [ColorType, setColorType] = useState<string>("");
+
 	const handleColorChange = useCallback((color: string) => {
-		setCurrentColor(color);
+		setCurrentColor((prev) => (prev === color ? prev : color));
 	}, []);
 
 	useEffect(() => {
@@ -28,6 +30,8 @@ export default function Home() {
 	useEffect(() => {
 		if (PickerType === "RGB") setCurrentColor(HEXtoRGB(CurrentColorHex));
 		if (PickerType === "HSL") setCurrentColor(HEXtoHSL(CurrentColorHex));
+		if (PickerType === "HWB") setCurrentColor(HEXtoHWB(CurrentColorHex));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [PickerType]);
 
 	useEffect(() => {
@@ -47,26 +51,15 @@ export default function Home() {
 			case "HSL":
 				setConvertedColor(HEXtoHSL(hex));
 				break;
+			case "HWB":
+				setConvertedColor(HEXtoHWB(hex));
+				break;
 
 			default:
 				setConvertedColor(CurrentColor);
 				break;
 		}
 	}, [CurrentColor, ColorType, PickerType]);
-
-	useEffect(() => {
-		function handleClickOutside(event: MouseEvent) {
-			if (
-				containerRef.current &&
-				!containerRef.current.contains(event.target as Node)
-			) {
-				setFilterOpen(false);
-			}
-		}
-
-		document.addEventListener("mousedown", handleClickOutside);
-		return () => document.removeEventListener("mousedown", handleClickOutside);
-	}, []);
 
 	const Picker = (val: string) => {
 		switch (val) {
@@ -75,7 +68,6 @@ export default function Home() {
 					<HSLPicker
 						OnColorChange={handleColorChange}
 						CurrentColor={HEXtoHSL(CurrentColorHex)}
-						key={"hsl"}
 					/>
 				);
 
@@ -84,7 +76,13 @@ export default function Home() {
 					<RGBPicker
 						OnColorChange={handleColorChange}
 						CurrentColor={HEXtoRGB(CurrentColorHex)}
-						key={"rgb"}
+					/>
+				);
+			case "HWB":
+				return (
+					<HWBPicker
+						OnColorChange={handleColorChange}
+						CurrentColor={HEXtoHWB(CurrentColorHex)}
 					/>
 				);
 
@@ -105,28 +103,48 @@ export default function Home() {
 			</div>
 
 			<div className="relative z-10 flex flex-col w-full text-center items-center">
-				<div className="flex flex-row gap-4">
-					<input
-						type="radio"
-						name="ColorType"
-						id="HSL"
-						placeholder="HSL"
-						onChange={() => {
-							setPickerType("HSL");
-						}}
-						defaultChecked
-					/>
-					<label htmlFor="HSL">HSL</label>
+				<div className="flex flex-row gap-10">
 
-					<input
-						type="radio"
-						name="ColorType"
-						id="RGB"
-						onChange={() => {
-							setPickerType("RGB");
-						}}
-					/>
-					<label htmlFor="RGB">RGB</label>
+					<div className="flex flex-row gap-3">
+						<input
+							type="radio"
+							name="ColorType"
+							id="HSL"
+							placeholder="HSL"
+							onChange={() => {
+								setPickerType("HSL");
+							}}
+							defaultChecked
+						/>
+
+						<label htmlFor="HSL">HSL</label>
+					</div>
+
+					<div className="flex flex-row gap-3">
+						<input
+							type="radio"
+							name="ColorType"
+							id="RGB"
+							onChange={() => {
+								setPickerType("RGB");
+							}}
+						/>
+
+						<label htmlFor="RGB">RGB</label>
+					</div>
+
+					<div className="flex flex-row gap-3">
+						<input
+							type="radio"
+							name="ColorType"
+							id="HWB"
+							onChange={() => {
+								setPickerType("HWB");
+							}}
+						/>
+
+						<label htmlFor="HWB">HWB</label>
+					</div>
 				</div>
 			</div>
 
@@ -179,64 +197,23 @@ export default function Home() {
 						</div>
 					</div>
 
-					<div>{Picker(PickerType)}</div>
+					<div key={"Picker"}>{Picker(PickerType)}</div>
 				</div>
 
 				<div
-					className={`p-3 rounded-2xl flex flex-row gap-5 text-center items-center w-110 transform transition ${copied ? "text-green-400 [-webkit-text-stroke: 1px black] " : ""} `}
+					className={`p-3 rounded-2xl flex flex-row gap-5 text-center items-center w-110 transform transition`}
 					style={{
 						backgroundColor: `hsla(0 0% 0% / 0.3)`,
 					}}
 				>
-					<div ref={containerRef} className="relative mr-auto">
-						<button
-							onClick={() => setFilterOpen(!filterOpen)}
-							className={`
-							${font.nunito.className}
-							flex items-center gap-2
-							px-4 py-2 rounded-lg
-							bg-[#00000000]/60
-							hover:bg-[#ffffff]/10
-							transition text-sm
-						`}
-						>
-							<span
-								className={
-									filterOpen ? "text-[#ffffff]/80" : "text-[#ffffff]/60"
-								}
-							>
-								{ColorType ? ColorType.toUpperCase() : PickerType.toUpperCase()}
-							</span>
-							<ChevronDown
-								className={`w-4 h-4 transition-transform text-[#ffff] ${filterOpen ? "rotate-180" : ""}`}
-							/>
-						</button>
-
-						{filterOpen && (
-							<div className="absolute top-full left-0 mt-2 w-44 bg-[#000000]/90 rounded-xl shadow-md  z-99">
-								<ul className="py-1 text-sm text-[#ffff] text-center p-1">
-									<li
-										className="px-4 py-2 hover:bg-[#ffff]/10 cursor-pointer transition"
-										onClick={() => {
-											setColorType("HSL");
-											setFilterOpen(false);
-										}}
-									>
-										HSL
-									</li>
-
-									<li
-										className="px-4 py-2 hover:bg-[#ffff]/10 cursor-pointer transition"
-										onClick={() => {
-											setColorType("RGB");
-											setFilterOpen(false);
-										}}
-									>
-										RGB
-									</li>
-								</ul>
-							</div>
-						)}
+					<div className="relative">
+						<DropDown
+							OnChange={(type) => {
+								setColorType(type);
+							}}
+							PickerType={PickerType}
+							className="mr-auto"
+						/>
 					</div>
 
 					<div
@@ -245,32 +222,35 @@ export default function Home() {
 						{ConvertedColor}
 					</div>
 
-					<div className="ml-auto">
-						{copied ? (
-							<Check
-								size={20}
-								height={20}
-								onClick={() => {
-									navigator.clipboard.writeText(ConvertedColor);
-								}}
-								className="text-center justify-center flex cursor-pointer animate-[ScaleUp_0.1s_ease-in-out] "
-							/>
-						) : (
-							<ClipboardCopy
-								size={20}
-								height={20}
-								onClick={() => {
-									navigator.clipboard.writeText(ConvertedColor);
-									setCopied(true);
+					<span className="flex items-center justify-center mr-auto ml-auto">
+						<ClipboardCopy
+							size={20}
+							height={20}
+							className="cursor-pointer"
+							onClick={(e) => {
+								navigator.clipboard.writeText(ConvertedColor);
+								const icon = e.currentTarget;
+								const check = icon.nextElementSibling as HTMLElement;
+								const wrapper = icon.closest<HTMLElement>(".rounded-2xl")!;
 
-									setTimeout(() => {
-										setCopied(false);
-									}, 3000);
-								}}
-								className="text-center justify-center flex cursor-pointer animate-[ScaleUp_0.1s_ease-in-out]"
-							/>
-						)}
-					</div>
+								icon.style.display = "none";
+								check.style.display = "block";
+								wrapper.classList.add("text-green-400");
+
+								setTimeout(() => {
+									icon.style.display = "block";
+									check.style.display = "none";
+									wrapper.classList.remove("text-green-400");
+								}, 3000);
+							}}
+						/>
+						<Check
+							size={20}
+							height={20}
+							className="cursor-pointer"
+							style={{ display: "none" }}
+						/>
+					</span>
 				</div>
 			</div>
 		</div>
