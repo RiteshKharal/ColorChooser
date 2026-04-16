@@ -80,15 +80,15 @@ export function DropDown({
 							RGB
 						</li>
 
-                            <li
-                                className="px-4 py-2 hover:bg-[#ffff]/10 cursor-pointer transition"
-                                onClick={() => {
-                                    setColorType("HWB");
-                                    setFilterOpen(false);
-                                }}
-                            >
-                                HWB
-                            </li>
+						<li
+							className="px-4 py-2 hover:bg-[#ffff]/10 cursor-pointer transition"
+							onClick={() => {
+								setColorType("HWB");
+								setFilterOpen(false);
+							}}
+						>
+							HWB
+						</li>
 					</ul>
 				</div>
 			)}

@@ -11,7 +11,7 @@ export function toHex(color: string): string {
 	const [r, g, b, a] = ctx.getImageData(0, 0, 1, 1).data;
 
 	const hex = [r, g, b].map((v) => v.toString(16).padStart(2, "0")).join("");
-	return `#${hex}${a === 255 ? "" : a.toString(16).padStart(2, "0")}`;
+	return `#${hex}${a === 255 || a === 0 ? "" : a.toString(16).padStart(2, "0")}`;
 }
 
 export function HEXtoRGB(hex: string): string {
@@ -86,4 +86,11 @@ export function HEXtoHWB(hex: string): string {
 	return a === 1
 		? `hwb(${hue} ${W}% ${B}%)`
 		: `hwb(${hue} ${W}% ${B}% / ${+a.toFixed(2)})`;
+}
+
+export function RandomHEX(){
+	const RGB = `rgb(${Math.min(Math.ceil(Math.random() * 266),255)}, ${Math.min(Math.ceil(Math.random() * 266),255)},${Math.min(Math.ceil(Math.random() * 266),255)})`
+
+
+	return toHex(RGB)
 }

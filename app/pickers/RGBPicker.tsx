@@ -195,7 +195,7 @@ export function RGBPicker({
 							const val = Number(el.target.value);
 
 							if (!el.target.value) {
-								el.target.value = "0";
+								el.target.value = "1";
 							}
 
 							if (val < 0 || val > 1 || !Number(el.target.value))

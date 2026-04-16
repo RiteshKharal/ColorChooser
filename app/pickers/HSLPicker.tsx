@@ -34,10 +34,9 @@ export function HSLPicker({
 			setSaturation(Math.min(Math.ceil(Math.random() * 100), 100));
 			setLightness(Math.min(Math.ceil(Math.random() * 100), 100));
 		}
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	
 	useEffect(() => {
 		const val = String(Number(transparency) / 100);
 		if (val !== TempAlpha) setTempAlpha(val);
@@ -143,7 +142,7 @@ export function HSLPicker({
 							setSaturation(el.target.value);
 						}}
 						onBlur={(el) => {
-							if (!el.target.value) el.target.value = "0";
+							if (!el.target.value) el.target.value = "1";
 
 							if (Number(el.target.value)) el.target.style.outline = "0px";
 						}}
@@ -195,7 +194,8 @@ export function HSLPicker({
 							const val = Number(el.target.value);
 
 							if (!el.target.value) {
-								el.target.value = "0";
+								el.target.value = "1";
+								el.target.style.outline = "0px";
 							}
 
 							if (val < 0 || val > 1 || !Number(el.target.value))

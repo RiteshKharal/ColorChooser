@@ -1,18 +1,21 @@
 "use client";
 import { HSLPicker } from "./pickers/HSLPicker";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ClipboardCopy, Check } from "lucide-react";
+import { ClipboardCopy, Check, DicesIcon } from "lucide-react";
 import { RGBPicker } from "./pickers/RGBPicker";
 import { toHex, HEXtoRGB, HEXtoHSL } from "./components/ColorConversions";
 import * as font from "@/app/fonts";
 import { DropDown } from "./components/DropDown";
 import { HEXtoHWB } from "./components/ColorConversions";
 import { HWBPicker } from "./pickers/HWBPicker";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+	const router = useRouter()
 	const [CurrentColor, setCurrentColor] = useState<string>(``);
 	const [ConvertedColor, setConvertedColor] = useState<string>(CurrentColor);
 	const [CurrentColorHex, setCurrentColorHex] = useState<string>("");
+	
 
 	const [PickerType, setPickerType] = useState<string>("HSL");
 	const [ColorType, setColorType] = useState<string>("");
@@ -102,9 +105,18 @@ export default function Home() {
 				<div className="grain"></div>
 			</div>
 
+			<section
+				className={`absolute top-3 right-10 text-[1.15rem] bg-black/40 font-bold  rounded-xl px-5 p-2 ${font.inconsolata.className} flex flex-row gap-3 cursor-pointer`}
+				onClick={()=>{
+					router.push('/random')
+				}}
+			>
+				<DicesIcon className={``} />
+				Random Colors
+			</section>
+
 			<div className="relative z-10 flex flex-col w-full text-center items-center">
 				<div className="flex flex-row gap-10">
-
 					<div className="flex flex-row gap-3">
 						<input
 							type="radio"
@@ -206,18 +218,17 @@ export default function Home() {
 						backgroundColor: `hsla(0 0% 0% / 0.3)`,
 					}}
 				>
-					<div className="relative">
+					<div className="relative mr-auto">
 						<DropDown
 							OnChange={(type) => {
 								setColorType(type);
 							}}
 							PickerType={PickerType}
-							className="mr-auto"
 						/>
 					</div>
 
 					<div
-						className={`transition h-full tracking-wider ${font.comfortaa.className}`}
+						className={`transition h-full tracking-wider ${font.comfortaa.className} mr-auto ml-auto`}
 					>
 						{ConvertedColor}
 					</div>

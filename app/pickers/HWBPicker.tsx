@@ -181,9 +181,21 @@ export function HWBPicker({
 						}}
 						onBlur={(el) => {
 							const val = Number(el.target.value);
-							if (!el.target.value) el.target.value = "0";
-							if (val < 0 || val > 1 || !Number(el.target.value))
+
+							if (!el.target.value) {
+								el.target.value = "1";
+								setTempAlpha("1");
+								setTransparency(100);
+								return;
+							}
+
+							if (val < 0 || val > 1 || isNaN(val)) {
 								el.target.style.outline = "1px solid red";
+								return;
+							}
+
+							el.target.style.outline = "0px";
+							setTransparency(val * 100);
 						}}
 					/>
 				</div>
