@@ -1,28 +1,34 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ArrowLeft, RefreshCw, Copy, Check, LockKeyhole } from "lucide-react";
-import { RandomHEX } from "../components/ColorConversions";
+import {
+	ArrowLeft,
+	RefreshCw,
+	Copy,
+	Check,
+	Lock,
+	LockOpen,
+} from "lucide-react";
+import { HEXtoHSL, HEXtoHWB, HEXtoRGB, RandomHEX } from "../components/ColorConversions";
 import { useRouter } from "next/navigation";
 import * as font from "@/app/fonts";
+import { DropDown } from "../components/DropDown";
 
 export default function Page() {
 	const router = useRouter();
-	const [ColorLength, setColorLength] = useState<number>(5);
+	const ColorLength = 5;
 	const [colors, setColors] = useState<string[]>([]);
 	const [copied, setCopied] = useState<number | null>(null);
 	const [locked, setLocked] = useState<number[]>([]);
+	const [ColorType, setColorType] = useState<string>("");
 
-	const regenerate = () =>
+	const regenerate = (currentColors: string[], currentLocked: number[]) => {
 		setColors(
-			Array.from({ length: 5 }, (v, i) => {
-				if (!locked.includes(i)) {
-					return RandomHEX();
-				} else {
-					return colors[i];
-				}
-			}),
+			Array.from({ length: ColorLength }, (_, i) =>
+				currentLocked.includes(i) ? currentColors[i] : RandomHEX(),
+			),
 		);
+	};
 
 	const copyColor = (val: string, i: number) => {
 		navigator.clipboard.writeText(val);
@@ -30,16 +36,67 @@ export default function Page() {
 		setTimeout(() => setCopied(null), 1500);
 	};
 
-	useEffect(() => {
-		setColors(Array.from({ length: 5 }, () => RandomHEX()));
+	// useEffect(() => {
+	// 	const hex = toHex(CurrentColor);
+	// 	setCurrentColorHex(hex);
 
+	// 	switch (ColorType.toUpperCase()) {
+	// 		case PickerType.toUpperCase():
+	// 			setConvertedColor(CurrentColor);
+	// 			break;
+
+	// 		case "RGB":
+	// 			const rgb = HEXtoRGB(hex);
+	// 			setConvertedColor(rgb);
+	// 			break;
+
+	// 		case "HSL":
+	// 			setConvertedColor(HEXtoHSL(hex));
+	// 			break;
+	// 		case "HWB":
+	// 			setConvertedColor(HEXtoHWB(hex));
+	// 			break;
+
+	// 		default:
+	// 			setConvertedColor(CurrentColor);
+	// 			break;
+	// 	}
+	// }, [CurrentColor, ColorType, PickerType]);
+
+	const convertColor = (hex: string, type: string) => {
+		switch (type.toUpperCase()) {
+			case "RGB":
+				return HEXtoRGB(hex);
+			case "HSL":
+				return HEXtoHSL(hex);
+			case "HWB":
+				return HEXtoHWB(hex);
+			default:
+				return hex;
+		}
+	};
+
+	const toggleLock = (i: number, e: React.MouseEvent) => {
+		e.stopPropagation();
+		setLocked((prev) =>
+			prev.includes(i) ? prev.filter((x) => x !== i) : [...prev, i],
+		);
+		(e.currentTarget as HTMLElement).blur();
+	};
+
+	useEffect(() => {
+		const initial = Array.from({ length: ColorLength }, () => RandomHEX());
+		// eslint-disable-next-line react-hooks/set-state-in-effect
+		setColors(initial);
+	}, []);
+
+	useEffect(() => {
 		const handler = (ev: KeyboardEvent) => {
-			if (ev.key === " ") regenerate();
+			if (ev.key === " ") regenerate(colors, locked);
 		};
 		window.addEventListener("keydown", handler);
 		return () => window.removeEventListener("keydown", handler);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [colors, locked]);
 
 	return (
 		<div className="relative flex flex-col min-h-screen w-full bg-[#0b0b10] overflow-hidden font-mono">
@@ -52,7 +109,6 @@ export default function Page() {
 				<div className="grain" />
 			</div>
 
-			{/* Header */}
 			<header className="relative z-10 flex items-center justify-between px-6 py-5">
 				<button
 					onClick={() => router.back()}
@@ -60,86 +116,107 @@ export default function Page() {
 				>
 					<ArrowLeft size={16} /> Back
 				</button>
-
 				<button
-					onClick={regenerate}
+					onClick={() => regenerate(colors, locked)}
 					className="flex items-center gap-2 text-white/50 hover:text-white transition-colors text-sm tracking-widest uppercase"
 				>
 					<RefreshCw size={14} /> Regenerate
 				</button>
 			</header>
 
-			<div className="relative z-10 px-6 pb-6 flex justify-between">
+			<div className="relative z-10 px-6 pb-6 flex justify-between items-end">
 				<div>
 					<p className="text-white/20 text-xs tracking-[0.3em] uppercase mb-1">
 						Random Palette
 					</p>
-
-					<div className="flex flex-row text-white text-3xl font-bold gap-5">
-						<h1 className="">{colors.length}</h1>
-						<label htmlFor="clrlegth">Colors</label>
-					</div>
+					<h1 className="text-white text-3xl font-bold">
+						{ColorLength} Colors
+					</h1>
 				</div>
-
-				<div className="">
-					<section className="opacity-70">
-						Click <span className="font-bold">Space</span> to regenerate!
-					</section>
-				</div>
+				<section
+					className={`opacity-40 font-bold flex text-center justify-center mt-3 ${font.comfortaa.className}`}
+				>
+					Click color to copy!
+				</section>
+				<p className="text-white/30 text-xs tracking-widest uppercase">
+					Press <span className="text-white/60 font-bold">Space</span> to
+					regenerate
+				</p>
 			</div>
 
 			<div
-				className="relative z-10 flex flex-row flex-1 min-h-0 mx-6 mb-6 rounded-2xl overflow-hidden shadow-2xl"
-				style={{ height: "60vh" }}
+				className="relative z-10 flex flex-row mx-6 mb-6 rounded-2xl overflow-hidden shadow-2xl"
+				style={{ height: "70vh" }}
 			>
 				{colors.map((color, i) => (
 					<div
 						key={i}
-						className="relative flex-1 group cursor-pointer transition-all duration-200 hover:flex-2 text-center justify-center place-items-center"
+						className="relative flex-1 group cursor-pointer transition-all duration-300 hover:flex-2"
 						style={{ backgroundColor: color }}
 						onClick={() => copyColor(color, i)}
 					>
 						<div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300" />
 
-						<div className="absolute bottom-0 left-0 right-0 p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300 bg-black/40 backdrop-blur-sm">
-							<p className="text-white text-xs font-bold tracking-widest uppercase">
-								{color}
-							</p>
-						</div>
-
-						<div className="flex flex-col w-full h-full text-center justify-center invisible group-hover:visible font-bold place-items-center gap-5">
-							<section
-								className={`[-webkit-text-stroke:0.09px_black] font-bold tracking-wider  bg-black/20 w-fit rounded-xl text-xl p-2 ${font.exo2.className}`}
-							>
-								{color}
-							</section>
-
-							<section className="">
-								<LockKeyhole />
-							</section>
-						</div>
+						{locked.includes(i) && (
+							<div className="absolute top-3 left-1/2 -translate-x-1/2 bg-black/50 backdrop-blur-sm rounded-full p-1.5">
+								<Lock size={12} className="text-white" />
+							</div>
+						)}
 
 						<div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
 							{copied === i ? (
-								<Check size={14} className="text-white" />
+								<Check size={13} className="text-white drop-shadow" />
 							) : (
-								<Copy size={14} className="text-white/80" />
+								<Copy size={13} className="text-white/70 drop-shadow" />
 							)}
+						</div>
+
+						<div className="absolute bottom-0 left-0 right-0 flex flex-col items-center gap-2 p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+							<span className="text-white text-[11px] font-bold tracking-widest uppercase bg-black/40 backdrop-blur-sm rounded-lg px-2 py-1 w-full text-center">
+								{color}
+							</span>
+
+							<button
+								onClick={(e) => toggleLock(i, e)}
+								className="flex items-center gap-1.5 text-[11px] text-white/80 bg-black/40 backdrop-blur-sm rounded-lg px-3 py-1.5 hover:bg-black/60 transition-colors w-full justify-center"
+							>
+								{locked.includes(i) ? (
+									<>
+										<Lock size={11} /> Locked
+									</>
+								) : (
+									<>
+										<LockOpen size={11} /> Lock
+									</>
+								)}
+							</button>
 						</div>
 					</div>
 				))}
 			</div>
 
-			<div className="relative z-10 flex flex-row gap-0 px-6 mb-10">
+			<div className="relative z-10 flex flex-row px-6 mb-10">
 				{colors.map((val, i) => (
-					<div key={i} className="flex-1 text-center">
+					<div key={i} className="flex-1 flex flex-col items-center gap-1.5">
 						<div
-							className="w-4 h-4 rounded-full mx-auto mb-2"
+							className="w-3 h-3 rounded-full ring-1 ring-white/10"
 							style={{ backgroundColor: val }}
 						/>
-						<p className="text-white/40 text-[10px] tracking-wider uppercase">
+						<p className="text-white/70 text-[9px] tracking-wider uppercase">
 							{val}
 						</p>
+						{/* {locked.includes(i) && <Lock size={9} className="text-white/30" />} */}
+
+						{/* <DropDown
+							PickerType="HEX"
+							OnChange={(v) => {
+								setColorType(v);
+							}}
+						/>
+
+						<section>{
+							convertColor(val,ColorType)
+							}</section> */}
 					</div>
 				))}
 			</div>
