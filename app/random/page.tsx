@@ -9,18 +9,39 @@ import {
 	Lock,
 	LockOpen,
 } from "lucide-react";
-import { HEXtoHSL, HEXtoHWB, HEXtoRGB, RandomHEX } from "../components/ColorConversions";
+import {
+	HEXtoHSL,
+	HEXtoHWB,
+	HEXtoRGB,
+	RandomHEX,
+} from "../components/ColorConversions";
 import { useRouter } from "next/navigation";
 import * as font from "@/app/fonts";
-import { DropDown } from "../components/DropDown";
 
 export default function Page() {
 	const router = useRouter();
-	const ColorLength = 5;
+	const [ColorLength, setColorLength] = useState<number>(5);
 	const [colors, setColors] = useState<string[]>([]);
 	const [copied, setCopied] = useState<number | null>(null);
 	const [locked, setLocked] = useState<number[]>([]);
 	const [ColorType, setColorType] = useState<string>("");
+	const tips = [
+		"Click color to copy!",
+		"Use arrow keys to increment or decrement",
+	];
+	const [CurrentTip, setCurrentTip] = useState<string>(
+		"Use arrow keys to increment or decrement",
+	);
+
+	useEffect(() => {
+		let i = 0;
+		const interval = setInterval(() => {
+			setCurrentTip(tips[i % tips.length]);
+			i++;
+		}, 5000);
+
+		return () => clearInterval(interval); // cleanup
+	}, []);
 
 	const regenerate = (currentColors: string[], currentLocked: number[]) => {
 		setColors(
@@ -35,33 +56,6 @@ export default function Page() {
 		setCopied(i);
 		setTimeout(() => setCopied(null), 1500);
 	};
-
-	// useEffect(() => {
-	// 	const hex = toHex(CurrentColor);
-	// 	setCurrentColorHex(hex);
-
-	// 	switch (ColorType.toUpperCase()) {
-	// 		case PickerType.toUpperCase():
-	// 			setConvertedColor(CurrentColor);
-	// 			break;
-
-	// 		case "RGB":
-	// 			const rgb = HEXtoRGB(hex);
-	// 			setConvertedColor(rgb);
-	// 			break;
-
-	// 		case "HSL":
-	// 			setConvertedColor(HEXtoHSL(hex));
-	// 			break;
-	// 		case "HWB":
-	// 			setConvertedColor(HEXtoHWB(hex));
-	// 			break;
-
-	// 		default:
-	// 			setConvertedColor(CurrentColor);
-	// 			break;
-	// 	}
-	// }, [CurrentColor, ColorType, PickerType]);
 
 	const convertColor = (hex: string, type: string) => {
 		switch (type.toUpperCase()) {
@@ -85,18 +79,40 @@ export default function Page() {
 	};
 
 	useEffect(() => {
-		const initial = Array.from({ length: ColorLength }, () => RandomHEX());
-		// eslint-disable-next-line react-hooks/set-state-in-effect
-		setColors(initial);
+		setColors(Array.from({ length: ColorLength }, () => RandomHEX()));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	useEffect(() => {
 		const handler = (ev: KeyboardEvent) => {
-			if (ev.key === " ") regenerate(colors, locked);
+			if (ev.key === " ") {
+				setColors((prev) =>
+					Array.from({ length: ColorLength }, (_, i) =>
+						locked.includes(i) ? prev[i] : RandomHEX(),
+					),
+				);
+			}
+
+			if (ev.key === "ArrowUp") {
+				setColorLength((prev) => (prev < 9 ? prev + 1 : prev));
+			}
+			if (ev.key === "ArrowDown") {
+				setColorLength((prev) => (prev > 2 ? prev - 1 : prev));
+			}
 		};
+
 		window.addEventListener("keydown", handler);
 		return () => window.removeEventListener("keydown", handler);
-	}, [colors, locked]);
+	}, [locked, ColorLength]);
+
+	useEffect(() => {
+		setColors((prev) =>
+			Array.from({ length: ColorLength }, (_, i) =>
+				locked.includes(i) && prev[i] ? prev[i] : (prev[i] ?? RandomHEX()),
+			),
+		);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ColorLength]);
 
 	return (
 		<div className="relative flex flex-col min-h-screen w-full bg-[#0b0b10] overflow-hidden font-mono">
@@ -134,9 +150,10 @@ export default function Page() {
 					</h1>
 				</div>
 				<section
-					className={`opacity-40 font-bold flex text-center justify-center mt-3 ${font.comfortaa.className}`}
+					className={`opacity-60 flex gap-2 text-center justify-center mt-3 ${font.josefin.className} transform transition-all`}
 				>
-					Click color to copy!
+					<span className="font-bold">Tip: </span>
+					{CurrentTip}
 				</section>
 				<p className="text-white/30 text-xs tracking-widest uppercase">
 					Press <span className="text-white/60 font-bold">Space</span> to
@@ -146,7 +163,7 @@ export default function Page() {
 
 			<div
 				className="relative z-10 flex flex-row mx-6 mb-6 rounded-2xl overflow-hidden shadow-2xl"
-				style={{ height: "70vh" }}
+				style={{ height: "69vh" }}
 			>
 				{colors.map((color, i) => (
 					<div
@@ -205,18 +222,6 @@ export default function Page() {
 						<p className="text-white/70 text-[9px] tracking-wider uppercase">
 							{val}
 						</p>
-						{/* {locked.includes(i) && <Lock size={9} className="text-white/30" />} */}
-
-						{/* <DropDown
-							PickerType="HEX"
-							OnChange={(v) => {
-								setColorType(v);
-							}}
-						/>
-
-						<section>{
-							convertColor(val,ColorType)
-							}</section> */}
 					</div>
 				))}
 			</div>
