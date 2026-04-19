@@ -125,3 +125,9 @@ body {
 		transform: scale(0.1);
 	}
 }
+
+@keyframes ScaleDown {
+	to {
+		transform: scale(0.1);
+	}
+}

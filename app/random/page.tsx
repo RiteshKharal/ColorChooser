@@ -9,14 +9,10 @@ import {
 	Lock,
 	LockOpen,
 } from "lucide-react";
-import {
-	HEXtoHSL,
-	HEXtoHWB,
-	HEXtoRGB,
-	RandomHEX,
-} from "../components/ColorConversions";
+import { RandomHEX } from "../components/ColorConversions";
 import { useRouter } from "next/navigation";
 import * as font from "@/app/fonts";
+import { ColorCard } from "../components/ColorCard";
 
 export default function Page() {
 	const router = useRouter();
@@ -24,21 +20,21 @@ export default function Page() {
 	const [colors, setColors] = useState<string[]>([]);
 	const [copied, setCopied] = useState<number | null>(null);
 	const [locked, setLocked] = useState<number[]>([]);
-	const [ColorType, setColorType] = useState<string>("");
-	const tips = [
-		"Click color to copy!",
-		"Use arrow keys to increment or decrement",
-	];
 	const [CurrentTip, setCurrentTip] = useState<string>(
 		"Use arrow keys to increment or decrement",
 	);
+	const [ColorMenu, setColorMenu] = useState<string | null>(null);
 
 	useEffect(() => {
+		const tips = [
+			"Click color to copy!",
+			"Use arrow keys to increment or decrement",
+		];
 		let i = 0;
 		const interval = setInterval(() => {
 			setCurrentTip(tips[i % tips.length]);
 			i++;
-		}, 5000);
+		}, 10000);
 
 		return () => clearInterval(interval); // cleanup
 	}, []);
@@ -57,18 +53,6 @@ export default function Page() {
 		setTimeout(() => setCopied(null), 1500);
 	};
 
-	const convertColor = (hex: string, type: string) => {
-		switch (type.toUpperCase()) {
-			case "RGB":
-				return HEXtoRGB(hex);
-			case "HSL":
-				return HEXtoHSL(hex);
-			case "HWB":
-				return HEXtoHWB(hex);
-			default:
-				return hex;
-		}
-	};
 
 	const toggleLock = (i: number, e: React.MouseEvent) => {
 		e.stopPropagation();
@@ -140,6 +124,15 @@ export default function Page() {
 				</button>
 			</header>
 
+			{ColorMenu !== null && (
+				<ColorCard
+					color={ColorMenu}
+					onClose={() => {
+						setColorMenu(null);
+					}}
+				/>
+			)}
+
 			<div className="relative z-10 px-6 pb-6 flex justify-between items-end">
 				<div>
 					<p className="text-white/20 text-xs tracking-[0.3em] uppercase mb-1">
@@ -163,7 +156,7 @@ export default function Page() {
 
 			<div
 				className="relative z-10 flex flex-row mx-6 mb-6 rounded-2xl overflow-hidden shadow-2xl"
-				style={{ height: "69vh" }}
+				style={{ height: "79.1vh" }}
 			>
 				{colors.map((color, i) => (
 					<div
@@ -189,7 +182,7 @@ export default function Page() {
 						</div>
 
 						<div className="absolute bottom-0 left-0 right-0 flex flex-col items-center gap-2 p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-							<span className="text-white text-[11px] font-bold tracking-widest uppercase bg-black/40 backdrop-blur-sm rounded-lg px-2 py-1 w-full text-center">
+							<span className={` text-[11px] font-bold tracking-widest uppercase bg-black/40 backdrop-blur-sm rounded-lg px-2 py-1 w-full text-center ${copied === i ? 'text-green-500':'text-white'} transition-all`}>
 								{color}
 							</span>
 
@@ -207,12 +200,22 @@ export default function Page() {
 									</>
 								)}
 							</button>
+
+							<span
+								className={`text-white text-[15px] font-bold tracking-wide bg-black/20 hover:bg-black/40 backdrop-blur-sm rounded-lg px-2 py-4 w-full text-center ${font.inconsolata.className}`}
+								onClick={(e) => {
+									e.stopPropagation();
+									setColorMenu(color);
+								}}
+							>
+								View options
+							</span>
 						</div>
 					</div>
 				))}
 			</div>
 
-			<div className="relative z-10 flex flex-row px-6 mb-10">
+			{/* <div className="relative z-10 flex flex-row px-6 mb-8">
 				{colors.map((val, i) => (
 					<div key={i} className="flex-1 flex flex-col items-center gap-1.5">
 						<div
@@ -224,7 +227,7 @@ export default function Page() {
 						</p>
 					</div>
 				))}
-			</div>
+			</div> */}
 		</div>
 	);
 }
